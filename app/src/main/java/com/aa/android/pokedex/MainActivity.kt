@@ -20,107 +20,77 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.aa.android.pokedex.model.UiState
+import com.aa.android.pokedex.presentation.Screen
+import com.aa.android.pokedex.presentation.SecondScreen
+import com.aa.android.pokedex.routes.Routes
 import com.aa.android.pokedex.ui.theme.PokedexTheme
 import com.aa.android.pokedex.viewmodel.MainViewModel
+import com.aa.android.pokedex.viewmodel.SecondViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
 
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             PokedexTheme {
-                Screen(mainViewModel.pokemonLiveData)
+                App()
             }
         }
     }
 }
 
 @Composable
-fun Screen(pokemon: LiveData<UiState<List<String>>>) {
-    Scaffold(topBar = {
-        TopAppBar(backgroundColor = MaterialTheme.colors.primary, title = {
-            Image(painter = painterResource(id = R.drawable.pokemon_logo), null)
-        })
-    }) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            color = MaterialTheme.colors.background
-        ) {
-            PokemonList(pokemon = pokemon)
-        }
-    }
+fun App() {
+    val mainViewModel: MainViewModel = hiltViewModel()
+    val secondViewModel: SecondViewModel = hiltViewModel()
+    val navHostController = rememberNavController()
+    AppNavHost(mainViewModel, secondViewModel, navHostController = navHostController)
 }
 
 @Composable
-fun PokemonList(pokemon: LiveData<UiState<List<String>>>) {
-    val uiState: UiState<List<String>>? by pokemon.observeAsState()
-    LazyColumn(modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 8.dp)
+fun AppNavHost(viewModel: MainViewModel, secondViewModel: SecondViewModel, navHostController: NavHostController) {
+    NavHost(
+        navController = navHostController,
+        startDestination = Routes.Home.route
     ) {
-        uiState?.let {
-            when (it) {
-                is UiState.Loading -> {
-                    items(20) {
-                        PokemonItem(pokemon = "", isLoading = true)
-                    }
+
+        composable(Routes.Home.route) {
+            Screen(viewModel.pokemonLiveData, navHostController)
+
+        }
+
+        composable(Routes.Detail.route,
+            listOf(
+                navArgument("id") {
+                    type = NavType.StringType
                 }
-                is UiState.Ready -> {
-                    items(it.data) { pkmn ->
-                        PokemonItem(pokemon = pkmn, isLoading = false)
-                    }
-                }
-                is UiState.Error -> {
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                            textAlign = TextAlign.Center,
-                            text = "Error loading list. Please try again later.",
-                            color = MaterialTheme.colors.onBackground
-                        )
-                    }
-                }
-            }
+            )) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: "Unknown"
+            SecondScreen(id = id, viewModel = secondViewModel, navController = navHostController)
+
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun PokemonItem(pokemon: String, isLoading: Boolean) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-            .placeholder(
-                visible = isLoading,
-                highlight = PlaceholderHighlight.shimmer(),
-                shape = RoundedCornerShape(8.dp)
-            ),
-        shape = RoundedCornerShape(8.dp),
-        onClick = {
-            // TODO: Navigate to detail screen, need to make one
-        }) {
-        Text(text = pokemon.capitalize(Locale.current), modifier = Modifier.padding(12.dp), textAlign = TextAlign.Center)
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PokedexTheme {
-        Screen(MutableLiveData(UiState.Ready(listOf("one", "two", "three"))))
-    }
-}

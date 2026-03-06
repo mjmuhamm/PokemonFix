@@ -22,11 +22,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-
-    @Provides
-    @Singleton
-    fun provideApi(moshi: Moshi): PokemonApi =
+    fun provideApi(): PokemonApi =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
