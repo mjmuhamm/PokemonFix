@@ -1,5 +1,6 @@
 package com.aa.android.pokedex.presentation
 
+import android.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.aa.android.pokedex.model.Type
 import com.aa.android.pokedex.viewmodel.SecondViewModel
 
 @Composable
@@ -91,11 +93,12 @@ fun SecondScreen(id: String, viewModel: SecondViewModel, navController: NavContr
 
         Text("Weight", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
         Text("${(state.value.weight.toDouble() / 10)} kg", modifier = Modifier.padding(start = 16.dp, top = 6.dp))
-        
+
         Text("Types", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
 
         for (i in 0..< state.value.types.size) {
-            Text("- ${state.value.types[i].type.name}", modifier = Modifier.padding(start = 18.dp, top = 6.dp))
+            val name = state.value.types[i].type.name.uppercase()
+            Text("- ${name.lowercase()}", modifier = Modifier.padding(start = 18.dp, top = 6.dp), color = Type.getColor(name))
         }
         Text("Stats", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
         for (i in 0..< state.value.stats.size) {
