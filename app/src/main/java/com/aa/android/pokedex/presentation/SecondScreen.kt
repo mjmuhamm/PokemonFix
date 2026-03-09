@@ -34,14 +34,14 @@ fun SecondScreen(id: String, viewModel: SecondViewModel, navController: NavContr
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 25.dp, top = 10.dp)
+                .padding(start = 10.dp, top = 10.dp)
         ) {
             Box(modifier = Modifier) {
 
                 Text(
                     "<",
                     color = Color.Gray,
-                    fontSize = 50.sp,
+                    fontSize = 35.sp,
                     fontWeight = FontWeight.Light,
                     modifier = Modifier
                         .padding(0.dp, 0.dp, 20.dp, 0.dp)
@@ -50,14 +50,14 @@ fun SecondScreen(id: String, viewModel: SecondViewModel, navController: NavContr
                 )
 
                 Text(
-                    "Second Page",
+                    "Pokemon Detail",
                     color = Color.Black,
-                    fontSize = 30.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
 
 
-                    modifier = Modifier.padding(100.dp, 13.dp, 0.dp, 0.dp)
+                    modifier = Modifier.padding(100.dp, 10.dp, 0.dp, 0.dp)
                 )
 
 //            HorizontalDivider(
@@ -87,11 +87,11 @@ fun SecondScreen(id: String, viewModel: SecondViewModel, navController: NavContr
 
 
         Text("Height", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
-        Text("${state.value.height * 10} cm", modifier = Modifier.padding(start = 16.dp, top = 6.dp))
+        Text("${(state.value.height.toDouble() * 10)} cm", modifier = Modifier.padding(start = 16.dp, top = 6.dp))
 
         Text("Weight", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
-        Text("${state.value.weight / 10} kg", modifier = Modifier.padding(start = 16.dp, top = 6.dp))
-
+        Text("${(state.value.weight.toDouble() / 10)} kg", modifier = Modifier.padding(start = 16.dp, top = 6.dp))
+        
         Text("Types", modifier = Modifier.padding(top = 16.dp, start = 16.dp))
 
         for (i in 0..< state.value.types.size) {
