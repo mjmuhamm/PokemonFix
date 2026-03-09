@@ -1,5 +1,6 @@
 package com.aa.android.pokedex.api.entity
 
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -12,7 +13,8 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 data class PokemonSpritesDTO(
-    @Json(name = "front_default")
+    @SerializedName("front_default")
+//    @Json(name = "front_default")
     val defaultFront: String,
     @Json(name = "back_default")
     val defaultBack: String,

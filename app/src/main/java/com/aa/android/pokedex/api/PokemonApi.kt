@@ -2,6 +2,8 @@ package com.aa.android.pokedex.api
 
 import com.aa.android.pokedex.api.entity.PokemonDTO
 import com.aa.android.pokedex.api.entity.ResourceListDTO
+import com.aa.android.pokedex.model.firstModel.FirstScreenResponse
+import com.aa.android.pokedex.model.secondModel.SecondScreenResponse
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.Call
 import retrofit2.Response
@@ -30,10 +32,10 @@ interface PokemonApi {
 
     // Coroutine APIs
     @GET("pokemon")
-    suspend fun getAllPokemon(@Query(value = "limit") limit: Int? = null, @Query(value = "offset") offset: Int? = null): Response<ResourceListDTO>
+    suspend fun getAllPokemon(@Query(value = "limit") limit: Int? = null, @Query(value = "offset") offset: Int? = null): FirstScreenResponse
 
     @GET("pokemon/{id}")
-    suspend fun getPokemon(@Path(value = "id") id: Int): Response<PokemonDTO>
+    suspend fun getPokemon(@Path(value = "id") id: Int): PokemonDTO
 
     @GET("pokemon/{name}")
     suspend fun getPokemon(@Path(value = "name") name: String): Response<PokemonDTO>

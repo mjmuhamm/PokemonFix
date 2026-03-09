@@ -17,26 +17,26 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.aa.android.pokedex.R
-import com.aa.android.pokedex.model.UiState
+import com.aa.android.pokedex.model.firstModel.Result
 import com.aa.android.pokedex.routes.Routes
+import com.aa.android.pokedex.viewmodel.MainViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 
 
 @Composable
-fun Screen(pokemon: LiveData<UiState<List<String>>>, navController: NavController) {
+fun Screen(viewModel: MainViewModel, navController: NavController) {
+
     Scaffold(topBar = {
         TopAppBar(backgroundColor = MaterialTheme.colors.primary, title = {
             Image(painter = painterResource(id = R.drawable.pokemon_logo), null)
@@ -48,49 +48,31 @@ fun Screen(pokemon: LiveData<UiState<List<String>>>, navController: NavControlle
                 .padding(it),
             color = MaterialTheme.colors.background
         ) {
-            PokemonList(pokemon = pokemon, navController)
+            val state = viewModel.state.collectAsStateWithLifecycle()
+
+            PokemonList(pokemon = state.value.results, navController)
         }
     }
 }
 
 @Composable
-fun PokemonList(pokemon: LiveData<UiState<List<String>>>, navController: NavController) {
-    val uiState: UiState<List<String>>? by pokemon.observeAsState()
+fun PokemonList(pokemon: List<Result>, navController: NavController) {
+//    val uiState: UiState<List<String>>? by pokemon.observeAsState()
     LazyColumn(modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        uiState?.let {
-            when (it) {
-                is UiState.Loading -> {
-                    items(20) {
-                        PokemonItem(pokemon = "", isLoading = true, navController)
-                    }
-                }
-                is UiState.Ready -> {
-                    items(it.data) { pkmn ->
-                        PokemonItem(pokemon = pkmn, isLoading = false, navController)
-
-                    }
-                }
-                is UiState.Error -> {
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                            textAlign = TextAlign.Center,
-                            text = "Error loading list. Please try again later.",
-                            color = MaterialTheme.colors.onBackground
-                        )
-                    }
-                }
-            }
+        items(pokemon) {
+            it ->
+            val index = pokemon.indexOf(it)
+            PokemonItem(index = index, pokemon = it, isLoading = false, navController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PokemonItem(pokemon: String, isLoading: Boolean, navController: NavController) {
+fun PokemonItem(index: Int, pokemon: Result, isLoading: Boolean, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,8 +84,9 @@ fun PokemonItem(pokemon: String, isLoading: Boolean, navController: NavControlle
             ),
         shape = RoundedCornerShape(8.dp),
         onClick = {
-            navController.navigate(Routes.Detail.createRoute(""))
+            navController.navigate(Routes.Detail.createRoute(index+1))
         }) {
-        Text(text = pokemon.capitalize(Locale.current), modifier = Modifier.padding(12.dp), textAlign = TextAlign.Center)
+
+        Text(text = pokemon.name.capitalize(Locale.current), modifier = Modifier.padding(12.dp), textAlign = TextAlign.Center)
     }
 }

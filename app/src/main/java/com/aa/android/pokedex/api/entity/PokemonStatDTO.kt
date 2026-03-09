@@ -1,5 +1,6 @@
 package com.aa.android.pokedex.api.entity
 
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -12,7 +13,8 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 data class PokemonStatDTO(
-    @Json(name = "base_stat")
+    @SerializedName("base_stat")
+//    @Json(name = "base_stat")
     val baseStat: Int,
     @Json(name = "effort")
     val effort: Int,

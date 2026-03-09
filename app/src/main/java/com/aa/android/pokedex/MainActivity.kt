@@ -76,7 +76,7 @@ fun AppNavHost(viewModel: MainViewModel, secondViewModel: SecondViewModel, navHo
     ) {
 
         composable(Routes.Home.route) {
-            Screen(viewModel.pokemonLiveData, navHostController)
+            Screen(viewModel, navHostController)
 
         }
 

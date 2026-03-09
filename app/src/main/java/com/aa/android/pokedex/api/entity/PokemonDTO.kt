@@ -16,15 +16,15 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class PokemonDTO(
     @Json(name = "name")
-    val name: String,
+    val name: String = "",
     @Json(name = "height")
-    val height: Int,
+    val height: Int = 0,
     @Json(name = "weight")
-    val weight: Int,
+    val weight: Int = 0,
     @Json(name = "types")
-    val types: List<PokemonTypeDTO>,
+    val types: List<PokemonTypeDTO> = emptyList(),
     @Json(name = "stats")
-    val stats: List<PokemonStatDTO>,
+    val stats: List<PokemonStatDTO> = emptyList(),
     @Json(name = "sprites")
-    val sprites: PokemonSpritesDTO
+    val sprites: PokemonSpritesDTO? = null
 )
